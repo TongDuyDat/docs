@@ -11,7 +11,7 @@ Dưới đây là biểu diễn toán học cho logic của class `WrongWayTrack
 - $\tau = 15.0$: Ngưỡng chuyển động dọc tối thiểu (`self.threshold`).
 - $d_{road}$: Hướng đường hợp lệ (`self.road_direction`, "bottom_to_top" hoặc "top_to_bottom").
 - $e_{max} = 10$: Số lỗi cho phép tối đa (`self.max_permissible_error`).
-- $e_{id}$: Số lỗi hiện tại củaInlining để tránh lỗi KaTeX trên GitHub, tôi sẽ sửa lại file Markdown để đảm bảo hiển thị đúng:
+- $e_{id}$: Số lỗi hiện tại của xe $V_{id}$ (`vehicle_data["permissible_error"]`).
 
 ## Hàm phụ
 1. **Tính tọa độ y của tâm đáy bounding box**:
@@ -32,35 +32,35 @@ Dưới đây là biểu diễn toán học cho logic của class `WrongWayTrack
 ### Bước 1: Kiểm tra lịch sử
 - Nếu $|H_{id}| < n_{min}$ (số lượng điểm lịch sử < 10):
   $$
-  \text{is_wrong_way} = \text{None}
+  \text{is\_wrong\_way} = \text{None}
   $$
   Kết quả:
   $$
-  f(V_{id}, B) = \{ V_{id}, \text{is_wrong_way} = \text{None} \}
+  f(V_{id}, B) = \{ V_{id}, \text{is\_wrong\_way} = \text{None} \}
   $$
 
 ### Bước 2: Kiểm tra ngưỡng chuyển động
 - Nếu $|\Delta y| \leq \tau$ (chênh lệch y nhỏ hơn ngưỡng):
   $$
-  \text{is_wrong_way} = \text{False}
+  \text{is\_wrong\_way} = \text{False}
   $$
   Kết quả:
   $$
-  f(V_{id}, B) = \{ V_{id}, \text{is_wrong_way} = \text{False} \}
+  f(V_{id}, B) = \{ V_{id}, \text{is\_wrong\_way} = \text{False} \}
   $$
 
 ### Bước 3: Xác định hướng sai
 - Định nghĩa điều kiện sai hướng:
   $$
-  \text{is_wrong_way_raw} =
+  \text{is\_wrong\_way\_raw} =
   \begin{cases} 
-  \Delta y < 0 & \text{nếu } d_{road} = \text{"bottom_to_top"} \\
-  \Delta y > 0 & \text{nếu } d_{road} = \text{"top_to_bottom"}
+  \Delta y < 0 & \text{nếu } d_{road} = \text{"bottom\_to\_top"} \\
+  \Delta y > 0 & \text{nếu } d_{road} = \text{"top\_to\_bottom"}
   \end{cases}
   $$
 
 ### Bước 4: Xử lý lỗi cho phép
-- Nếu $\text{is_wrong_way_raw} = \text{True}$ và $e_{id} < e_{max}$:
+- Nếu $\text{is\_wrong\_way\_raw} = \text{True}$ và $e_{id} < e_{max}$:
   $$
   e_{id} \leftarrow e_{id} + 1
   $$
@@ -68,20 +68,20 @@ Dưới đây là biểu diễn toán học cho logic của class `WrongWayTrack
   H_{id}[-n_{min} + 1] \leftarrow (B, t)
   $$
   $$
-  \text{is_wrong_way} = \text{False}
+  \text{is\_wrong\_way} = \text{False}
   $$
 - Ngược lại:
   $$
   e_{id} \leftarrow 0
   $$
   $$
-  \text{is_wrong_way} = \text{is_wrong_way_raw}
+  \text{is\_wrong\_way} = \text{is\_wrong\_way\_raw}
   $$
 
 ### Kết quả cuối cùng
 - Hàm trả về:
   $$
-  f(V_{id}, B) = \{ V_{id}, \text{is_wrong_way} \}
+  f(V_{id}, B) = \{ V_{id}, \text{is\_wrong\_way} \}
   $$
 
 ## Tổng quát hóa
@@ -91,11 +91,11 @@ f(V_{id}, B) =
 \begin{cases} 
 \{ V_{id}, \text{None} \} & \text{nếu } |H_{id}| < n_{min} \\
 \{ V_{id}, \text{False} \} & \text{nếu } |\Delta y| \leq \tau \\
-\{ V_{id}, \text{False} \} & \text{nếu } \text{is_wrong_way_raw} = \text{True} \land e_{id} < e_{max} \\
-\{ V_{id}, \text{is_wrong_way_raw} \} & \text{ngược lại}
+\{ V_{id}, \text{False} \} & \text{nếu } \text{is\_wrong\_way\_raw} = \text{True} \land e_{id} < e_{max} \\
+\{ V_{id}, \text{is\_wrong\_way\_raw} \} & \text{ngược lại}
 \end{cases}
 $$
 
 ## Ghi chú
-- $\text{is_wrong_way_raw}$ là kết quả kiểm tra hướng dựa trên $\Delta y$ và $d_{road}$.
+- $\text{is\_wrong\_way\_raw}$ là kết quả kiểm tra hướng dựa trên $\Delta y$ và $d_{road}$.
 - Việc cập nhật $e_{id}$ và $H_{id}$ chỉ xảy ra trong trường hợp có lỗi sai hướng nhưng vẫn trong ngưỡng cho phép.
