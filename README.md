@@ -8,4 +8,6 @@
 # Using docker 
 ```bash
 docker run -d -p 6333:6333 -v D:/NCKH/LLM/Langchain/qdrant-data:/qdrant/storage:z --name qdrant-container --rm qdrant/qdrant
+docker system prune -a --volumes
+docker builder prune
 ```
